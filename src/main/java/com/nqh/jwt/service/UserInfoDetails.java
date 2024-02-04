@@ -11,6 +11,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+ * UserInfoDetails là class implement UserDetails
+ * 
+ * UserDetails là một interface trong Spring Security, cung cấp các phương thức để lấy thông tin về người dùng
+ * 
+ * Class này sẽ được sử dụng trong JwtUserDetailsService
+ */
 public class UserInfoDetails implements UserDetails {
     String userName=null;
     String password = null;

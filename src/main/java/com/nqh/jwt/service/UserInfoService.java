@@ -15,6 +15,13 @@ import com.nqh.jwt.repository.UserInfoRepository;
 import java.util.List;
 import java.util.Optional;
 
+/*
+ * UserInfoService là class implement UserDetailsService
+ * 
+ * UserDetailsService là một interface trong Spring Security, cung cấp các phương thức để lấy thông tin về người dùng
+ * 
+ * Class này sẽ được sử dụng trong JwtUserDetailsService
+ */
 @Service
 public class UserInfoService implements UserDetailsService {
     @Autowired
@@ -37,5 +44,9 @@ public class UserInfoService implements UserDetailsService {
     }
     public UserInfo getUser(Integer id){
         return userInfoRepository.findById(id).get();
+    }
+
+    public Optional<UserInfo> findByName(String name){
+        return userInfoRepository.findByName(name);
     }
 }
