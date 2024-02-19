@@ -38,6 +38,11 @@ public class JwtService {
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact(); // Ký và tạo ra token
     }
 
+    // Phương thức tạo mới token từ thông tin user và thời gian hết hạn của token 
+    
+
+
+
     // Phương thức này sẽ kiểm tra tính hợp lệ của token
     private Key getSignKey() {
         // Đoạn mã bí mật này sẽ được giấu ở env, ở đây để minh họa

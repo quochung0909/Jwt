@@ -10,6 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.nqh.jwt.entity.AuthRequest;
@@ -20,6 +21,8 @@ import com.nqh.jwt.service.JwtService;
 import com.nqh.jwt.service.TokenService;
 import com.nqh.jwt.service.UserInfoDetails;
 import com.nqh.jwt.service.UserInfoService;
+
+import jakarta.validation.Valid;
 
 
 /*
@@ -44,52 +47,41 @@ public class AccountController {
     @Autowired
     private TokenService tokenService;
 
-    // Phương thức này sẽ thêm mới user
     @PostMapping("/addUser")
-    public ResponseEntity<?> addUser(@RequestBody UserInfo userInfo) {
+    public ResponseEntity<?> addUser(@Valid @RequestBody UserInfo userInfo, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getAllErrors(), HttpStatus.BAD_REQUEST);
+        }
         try {
-
-            // Kiểm tra xem username đã tồn tại chưa 
             if (userInfoService.findByName(userInfo.getName()).isPresent()) {
-                // Nếu username đã tồn tại, trả về thông báo lỗi
                 Response res = new Response();
                 res.setMessage("Username is already taken");
                 res.setStatus(HttpStatus.BAD_REQUEST);
                 res.setTimestamp(String.valueOf(System.currentTimeMillis()));
-
-                // Trả về response thông báo lỗi
                 return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             } else {
-                // Nếu username chưa tồn tại, thêm mới user
                 userInfoService.addUser(userInfo);
-
-                // Trả về thông báo thành công
                 Response res = new Response();
                 res.setMessage("User added successfully");
-                res.setStatus(HttpStatus.OK);
+                res.setStatus(HttpStatus.CREATED);
                 res.setTimestamp(String.valueOf(System.currentTimeMillis()));
-
-                // Trả về response thông báo thành công
-                return new ResponseEntity<>(res, HttpStatus.OK);
+                return new ResponseEntity<>(res, HttpStatus.CREATED);
             }
-
         } catch (Exception e) {
-
-            // Nếu có lỗi xảy ra, trả về thông báo lỗi
             Response res = new Response();
             res.setMessage("Internal server error");
             res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
             res.setTimestamp(String.valueOf(System.currentTimeMillis()));
-
-            // Trả về response thông báo lỗi
             return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     // Phương thức này sẽ xử lý đăng nhập
     @PostMapping("/login")
-    public ResponseEntity<Response> addUser(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<?> addUser(@Valid @RequestBody AuthRequest authRequest, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getAllErrors(), HttpStatus.BAD_REQUEST);
+        }
         try {
 
             // Thêm thông tin đăng nhập vào context để spring security kiểm tra 
